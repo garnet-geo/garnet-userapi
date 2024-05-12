@@ -1,0 +1,202 @@
+openapi: 3.0.0
+
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/USLASHVLAD_1/GarnetUserAPI/v0
+
+info:
+  version: 'v0'
+  title: Garnet User API
+
+paths:
+  /login:
+    post:
+      tags:
+        - Auth
+      description: Login into existing account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  $ref: '#/components/schemas/UserEmail'
+                password:
+                  type: string
+                  example: password123
+      responses:
+        200:
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    $ref: '#/components/schemas/UserToken'
+  /user:
+    post:
+      tags:
+        - Auth
+      description: Creating new user account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - name
+              properties:
+                email:
+                  $ref: '#/components/schemas/UserEmail'
+                password:
+                  type: string
+                  example: password123
+                name:
+                  $ref: '#/components/schemas/DomainName'
+      responses:
+        200:
+          description: Successful sign up
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    $ref: '#/components/schemas/UserToken'
+                  user:
+                    $ref: '#/components/schemas/UserInfo'
+  /check:
+    get:
+      tags:
+        - Auth
+      description: Check if user is logged in with correct token
+      responses:
+        200:
+          description: User has valid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                    example: true
+        401:
+          description: User has invalid token or doesn't have it completely
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                    example: false
+  /user/{id}:
+    get:
+      tags:
+        - User info
+      description: Get info about user
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserId'
+      responses:
+        200:
+          description: Info about user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfo'
+    patch:
+      tags:
+        - User info
+      description: Edit user info
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: new_example_login
+                long_name:
+                  type: string
+                  example: New User Name
+                email:
+                  type: string
+                  example: new_user@example.com
+      responses:
+        200:
+          description: Get info about user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfo'
+    delete:
+      tags:
+        - User info
+      description: Delete user
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserId'
+      responses:
+        200:
+          description: User deleted successfuly
+          content:
+            application/json: {}
+
+components:
+  schemas:
+    UserToken:
+      type: string
+      example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiMTYzNWI3YjItODBkZi00YzliLTlmYTktODU0OGY0OWIwMGJkIn0.sMwFTmSgpqpp12Q4jDMm_iVNqnMThTZfq896pd-pwxY
+    UserInfo:
+      type: object
+      required:
+        - id
+        - name
+        - email
+      properties:
+        id:
+          $ref: '#/components/schemas/UserId'
+        name:
+          $ref: '#/components/schemas/DomainName'
+        long_name:
+          $ref: '#/components/schemas/UserLongName'
+        email:
+          $ref: '#/components/schemas/UserEmail'
+    UserId:
+      type: string
+      example: 1635b7b2-80df-4c9b-9fa9-8548f49b00bd
+    UserLongName:
+      type: string
+      example: User Name
+    UserEmail:
+      type: string
+      example: user@example.com
+    DomainId:
+      type: string
+      example: c5debace-bc01-43b1-9f4f-68a840e6b031
+    DomainName:
+      type: string
+      example: example_login
