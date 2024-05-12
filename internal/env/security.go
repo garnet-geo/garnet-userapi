@@ -21,3 +21,7 @@ func GetSecurityCryptoParams() *security.CryptoParams {
 		Iv:     GetStringEnv(consts.SecurityEncryptionInitVectorEnv),
 	}
 }
+
+func GetSecurityTokenSecret() string {
+	return GetStringEnv(consts.SecurityEncryptionTokenSecretEnv)
+}

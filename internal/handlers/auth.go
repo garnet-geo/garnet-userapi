@@ -18,12 +18,8 @@ func AuthPostLogin(c *gin.Context) {
 		Password string `json:"password" binding:"required"`
 	}
 
-	if err := c.BindJSON(&loginData); err != nil {
+	if err = c.BindJSON(&loginData); err != nil {
 		c.AbortWithError(400, err)
-		return
-	}
-	if loginData.Email == "" || loginData.Password == "" {
-		c.JSON(400, "Missing email or password")
 		return
 	}
 
@@ -55,27 +51,102 @@ func AuthPostLogin(c *gin.Context) {
 		return
 	}
 
-	row = db.ExecuteQueryRow(
-		"SELECT name, long_name FROM domains "+
-			"WHERE id = $1;",
-		userData.Domain,
-	)
+	token := security.GenTokenForUser(string(userData.Id), env.GetSecurityTokenSecret())
 
-	var result UserInfoModel
-	err = row.Scan(&result.Name, &result.LongName)
+	c.JSON(200, gin.H{
+		"token": token,
+	})
+}
+
+func AuthPostUser(c *gin.Context) {
+	var err error
+	var loginData struct {
+		Email    string `json:"email" binding:"required"`
+		Password string `json:"password" binding:"required"`
+		Name     string `json:"name" binding:"required"`
+		LongName string `json:"long_name"`
+	}
+
+	if err = c.BindJSON(&loginData); err != nil {
+		c.AbortWithError(400, err)
+		return
+	}
+
+	if len(loginData.Password) < 4 {
+		c.JSON(400, "Password must be at least 4 characters long")
+		return
+	}
+	if len(loginData.Name) < 5 {
+		c.JSON(400, "Name must be at least 5 characters long")
+		return
+	}
+
+	encryptedEmail := security.EncryptSymetric(loginData.Email, env.GetSecurityCryptoParams())
+	row := db.ExecuteQueryRow(
+		"SELECT COUNT(id) FROM users "+
+			"WHERE email = $1;",
+		encryptedEmail,
+	)
+	var count int
+	err = row.Scan(&count)
 	if err != nil {
 		c.JSON(500, fmt.Sprint(err))
 		return
 	}
-	result.Id = UserId(userData.Id)
-	decryptedEmail := security.DecryptSymetric(userData.Email, env.GetSecurityCryptoParams())
-	result.Email = UserEmail(decryptedEmail)
 
-	c.JSON(200, result)
-}
+	if count > 0 {
+		c.JSON(403, "User already exists")
+		return
+	}
 
-func AuthPostUser(c *gin.Context) {
+	row = db.ExecuteQueryRow(
+		"INSERT INTO domains ( name, long_name ) "+
+			"VALUES ( $1, $2 ) "+
+			"RETURNING id;",
+		loginData.Name,
+		loginData.LongName,
+	)
 
+	var domainId string
+	err = row.Scan(&domainId)
+	if err != nil {
+		c.JSON(500, fmt.Sprint(err))
+		return
+	}
+
+	passwordHash, err := security.CreateHash(loginData.Password, env.GetSecurityHashParams())
+	if err != nil {
+		c.JSON(500, fmt.Sprint(err))
+		return
+	}
+
+	row = db.ExecuteQueryRow(
+		"INSERT INTO users ( domain, email, password ) "+
+			"VALUES ( $1, $2, $3 ) "+
+			"RETURNING id;",
+		domainId,
+		encryptedEmail,
+		passwordHash,
+	)
+
+	var userId string
+	err = row.Scan(&userId)
+	if err != nil {
+		c.JSON(500, fmt.Sprint(err))
+		return
+	}
+
+	token := security.GenTokenForUser(string(userId), env.GetSecurityTokenSecret())
+
+	c.JSON(200, gin.H{
+		"token": token,
+		"user": UserInfoModel{
+			Id:       UserId(userId),
+			Name:     DomainName(loginData.Name),
+			LongName: loginData.LongName,
+			Email:    UserEmail(loginData.Email),
+		},
+	})
 }
 
 func AuthGetCheckToken(c *gin.Context) {

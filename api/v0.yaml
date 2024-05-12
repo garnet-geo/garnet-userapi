@@ -61,6 +61,8 @@ paths:
                   example: password123
                 name:
                   $ref: '#/components/schemas/DomainName'
+                long_name:
+                  $ref: '#/components/schemas/UserLongName'
       responses:
         200:
           description: Successful sign up

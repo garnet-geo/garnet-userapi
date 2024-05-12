@@ -10,6 +10,7 @@ const SecurityHashKeyLengthEnv = "GARNET_SECURITY_HASH_KEY_LENGTH"
 // Environment variables for encryption settings
 const SecurityEncryptionKeyEnv = "GARNET_SECURITY_ENCRYPTION_KEY"
 const SecurityEncryptionInitVectorEnv = "GARNET_SECURITY_ENCRYPTION_IV"
+const SecurityEncryptionTokenSecretEnv = "GARNET_SECURITY_ENCRYPTION_TOKEN_SECRET"
 
 // Environment variables for server configuration
 const ServerHttpPortEnv = "GARNET_SERVER_HTTP_PORT"
