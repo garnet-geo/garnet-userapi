@@ -88,19 +88,15 @@ paths:
               schema:
                 type: object
                 properties:
-                  valid:
-                    type: boolean
-                    example: true
+                  user_id:
+                    $ref: '#/components/schemas/UserId'
         401:
           description: User has invalid token or doesn't have it completely
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  valid:
-                    type: boolean
-                    example: false
+                type: string
+                example: 'unauthorized'
   /user/{id}:
     get:
       tags:

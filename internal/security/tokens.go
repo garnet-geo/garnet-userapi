@@ -1,6 +1,7 @@
 package security
 
 import (
+	"errors"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -8,7 +9,7 @@ import (
 
 func GenTokenForUser(userId string, secret string) string {
 	payload := jwt.MapClaims{
-		"user": userId,
+		"sub": userId,
 		"exp":  time.Now().Add(time.Hour * 72).Unix(),
 	}
 
@@ -19,4 +20,22 @@ func GenTokenForUser(userId string, secret string) string {
 	}
 
 	return t
+}
+
+func GetUserFromToken(token string, secret string) (string, error) {
+	parsed, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
+	})
+
+	if err != nil {
+		return "", errors.New("invalid token")
+	}
+
+	userId, err := parsed.Claims.GetSubject()
+
+	if err != nil || userId == "" {
+		return "", errors.New("invalid token")
+	}
+
+	return userId, nil
 }

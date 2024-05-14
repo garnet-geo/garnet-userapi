@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/garnet-geo/garnet-userapi/internal/consts"
 	"github.com/garnet-geo/garnet-userapi/internal/db"
 	"github.com/garnet-geo/garnet-userapi/internal/env"
 	"github.com/garnet-geo/garnet-userapi/internal/security"
@@ -150,5 +151,9 @@ func AuthPostUser(c *gin.Context) {
 }
 
 func AuthGetCheckToken(c *gin.Context) {
+	userID := c.MustGet(consts.UserIDContextKey).(string)
 
+	c.JSON(200, gin.H{
+		"user_id": userID,
+	})
 }
