@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/garnet-geo/garnet-userapi/internal/consts"
 	"github.com/garnet-geo/garnet-userapi/internal/db"
@@ -36,15 +35,14 @@ func AuthPostLogin(c *gin.Context) {
 	if errors.Is(err, pgx.ErrNoRows) {
 		c.JSON(404, "User not found")
 		return
-	}
-	if err != nil {
-		c.JSON(500, fmt.Sprint(err))
+	} else if err != nil {
+		c.JSON(500, err)
 		return
 	}
 
 	verified, err := security.VerifyHash(loginData.Password, userData.Password)
 	if err != nil {
-		c.JSON(500, fmt.Sprint(err))
+		c.JSON(500, err)
 		return
 	}
 	if !verified {
@@ -91,7 +89,7 @@ func AuthPostUser(c *gin.Context) {
 	var count int
 	err = row.Scan(&count)
 	if err != nil {
-		c.JSON(500, fmt.Sprint(err))
+		c.JSON(500, err)
 		return
 	}
 
@@ -111,13 +109,13 @@ func AuthPostUser(c *gin.Context) {
 	var domainId string
 	err = row.Scan(&domainId)
 	if err != nil {
-		c.JSON(500, fmt.Sprint(err))
+		c.JSON(500, err)
 		return
 	}
 
 	passwordHash, err := security.CreateHash(loginData.Password, env.GetSecurityHashParams())
 	if err != nil {
-		c.JSON(500, fmt.Sprint(err))
+		c.JSON(500, err)
 		return
 	}
 
@@ -133,7 +131,7 @@ func AuthPostUser(c *gin.Context) {
 	var userId string
 	err = row.Scan(&userId)
 	if err != nil {
-		c.JSON(500, fmt.Sprint(err))
+		c.JSON(500, err)
 		return
 	}
 
