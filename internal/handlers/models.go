@@ -1,10 +1,11 @@
 package handlers
 
 type UserInfoModel struct {
-	Id       UserId     `json:"id"`
-	Name     DomainName `json:"name"`
-	LongName string     `json:"long_name"`
-	Email    UserEmail  `json:"email"`
+	Id       UserId     `json:"id,omitempty"`
+	Name     DomainName `json:"name,omitempty"`
+	LongName string     `json:"long_name,omitempty"`
+	Email    UserEmail  `json:"email,omitempty"`
+	Password string     `json:"password,omitempty"`
 }
 
 type UserId string

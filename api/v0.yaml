@@ -140,6 +140,9 @@ paths:
                 email:
                   type: string
                   example: new_user@example.com
+                password:
+                  type: string
+                  example: new_example_password
       responses:
         200:
           description: Get info about user

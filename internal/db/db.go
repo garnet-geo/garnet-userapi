@@ -15,7 +15,7 @@ var conn *pgxpool.Pool
 
 func InitConnection() {
 	var err error
-	conn, err = pgxpool.New(context.Background(), env.GetDatabaseUrl())
+	conn, err = pgxpool.New(Context(), env.GetDatabaseUrl())
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
@@ -31,9 +31,17 @@ func CloseConnection() {
 }
 
 func ExecuteQuery(query string, args ...any) (pgx.Rows, error) {
-	return conn.Query(context.Background(), query, args...)
+	return conn.Query(Context(), query, args...)
 }
 
 func ExecuteQueryRow(query string, args ...any) pgx.Row {
-	return conn.QueryRow(context.Background(), query, args...)
+	return conn.QueryRow(Context(), query, args...)
+}
+
+func ExecuteTransaction() (pgx.Tx, error) {
+	return conn.Begin(Context())
+}
+
+func Context() context.Context {
+	return context.Background()
 }
