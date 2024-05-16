@@ -176,4 +176,53 @@ func UserInfoPatchUserById(c *gin.Context) {
 	c.JSON(200, userInfo)
 }
 
-func UserInfoDeleteUserById(c *gin.Context) {}
+func UserInfoDeleteUserById(c *gin.Context) {
+	// All user profiles are public currently
+	userID := c.MustGet(consts.UserIDContextKey).(string)
+	requestedUserId := c.Param("id")
+	if requestedUserId == "" {
+		c.JSON(400, "Invalid user ID")
+		return
+	}
+
+	if userID != requestedUserId {
+		c.JSON(403, "Forbidden")
+		return
+	}
+
+	row := db.ExecuteQueryRow(
+		"SELECT domain FROM users WHERE id = $1;",
+		requestedUserId,
+	)
+	var domainId string
+	err := row.Scan(&domainId)
+	if errors.Is(err, pgx.ErrNoRows) {
+		c.JSON(404, "User not found")
+	} else if err != nil {
+		c.JSON(500, err)
+		return
+	}
+
+	transaction, err := db.ExecuteTransaction()
+	if err != nil {
+		c.JSON(500, err)
+		return
+	}
+
+	transaction.Exec(db.Context(),
+		"DELETE FROM  users WHERE id = $1;",
+		requestedUserId,
+	)
+	transaction.Exec(db.Context(),
+		"DELETE FROM domains WHERE id = $1;",
+		domainId,
+	)
+
+	err = transaction.Commit(db.Context())
+	if err != nil {
+		c.JSON(500, err)
+		return
+	}
+
+	c.JSON(200, "OK")
+}
