@@ -87,6 +87,14 @@ func UserInfoPatchUserById(c *gin.Context) {
 		c.JSON(400, "Nothing to update")
 		return
 	}
+	if userEditData.Password != "" && len(userEditData.Password) < 4 {
+		c.JSON(400, "Password must be at least 4 characters long")
+		return
+	}
+	if userEditData.Name != "" && len(userEditData.Name) < 5 {
+		c.JSON(400, "Name must be at least 5 characters long")
+		return
+	}
 
 	userInfo := UserInfoModel{
 		Id: UserId(requestedUserId),

@@ -9,6 +9,7 @@ const (
 	SecurityHashParallelismEnv = "GARNET_SECURITY_HASH_PARALLELISM"
 	SecurityHashSaltLengthEnv  = "GARNET_SECURITY_HASH_SALT_LENGTH"
 	SecurityHashKeyLengthEnv   = "GARNET_SECURITY_HASH_KEY_LENGTH"
+	SecurityHashSpecialSalt    = "GARNET_SECURITY_HASH_SPECIAL_SALT"
 )
 
 // Environment variables for encryption settings

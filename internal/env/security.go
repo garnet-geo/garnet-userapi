@@ -15,6 +15,10 @@ func GetSecurityHashParams() *security.HashParams {
 	}
 }
 
+func GetSecurityHashSpecialSalt() string {
+	return GetStringEnv(consts.SecurityHashSpecialSalt)
+}
+
 func GetSecurityCryptoParams() *security.CryptoParams {
 	return &security.CryptoParams{
 		Secret: GetStringEnv(consts.SecurityEncryptionKeyEnv),

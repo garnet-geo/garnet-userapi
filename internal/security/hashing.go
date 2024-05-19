@@ -25,11 +25,17 @@ type HashParams struct {
 	KeyLength   uint32
 }
 
-func CreateHash(plaintext string, p *HashParams) (encodedHash string, err error) {
-	salt, err := generateRandomBytes(p.SaltLength)
-	if err != nil {
-		return "", err
-	}
+func CreateHash(plaintext string, p *HashParams, specialSalt ...string) (encodedHash string, err error) {
+    var salt []byte
+
+    if len(specialSalt) > 0 {
+        salt = []byte(specialSalt[0])
+    } else {
+        salt, err = generateRandomBytes(p.SaltLength)
+        if err != nil {
+            return "", err
+        }
+    }
 
 	hash := argon2.IDKey([]byte(plaintext), salt, p.Iterations, p.Memory, p.Parallelism, p.KeyLength)
 

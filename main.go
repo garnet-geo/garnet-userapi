@@ -25,5 +25,12 @@ func main() {
 	db.InitConnection()
 	defer db.CloseConnection()
 
+	err := db.CheckConnection()
+	if err != nil {
+		log.Fatalln("Cant connect to database: ", err)
+		return
+	}
+	log.Info("Connected to the database successfully")
+
 	server.InitServer()
 }

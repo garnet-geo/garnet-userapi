@@ -40,13 +40,18 @@ func InitConnection() {
 		panic(fmt.Sprintf("Unable to connect to database: %v\n", err))
 	}
 
-	log.Infoln("Connected to the database")
+	log.Infoln("Created connection to the database")
 }
 
 func CloseConnection() {
 	conn.Close()
 
 	log.Infoln("Closed connection to the database")
+}
+
+func CheckConnection() error {
+	log.Debugln("Checking connection")
+	return conn.Ping(Context())
 }
 
 func ExecuteQuery(query string, args ...any) (pgx.Rows, error) {
