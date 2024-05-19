@@ -1,5 +1,7 @@
 package consts
 
+const GlobalDebugEnv = "GARNET_DEBUG"
+
 // Environment variables for hashing settings
 const (
 	SecurityHashMemoryEnv      = "GARNET_SECURITY_HASH_MEMORY"

@@ -6,6 +6,8 @@ import (
 	"crypto/cipher"
 	"encoding/base64"
 	"fmt"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type CryptoParams struct {
@@ -38,6 +40,7 @@ func EncryptSymetric(plaintext string, params *CryptoParams) string {
 
 	str := base64.StdEncoding.EncodeToString(ciphertext)
 
+	log.Debugln("Encrypted string", str)
 	return str
 }
 
@@ -62,6 +65,7 @@ func DecryptSymetric(encrypted string, params *CryptoParams) string {
 	mode.CryptBlocks(ciphertext, ciphertext)
 	ciphertext = PKCS5UnPadding(ciphertext)
 
+	log.Debugln("Decrypted string", string(ciphertext))
 	return string(ciphertext)
 }
 

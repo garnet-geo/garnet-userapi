@@ -2,12 +2,11 @@ package server
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/garnet-geo/garnet-userapi/internal/env"
 	"github.com/garnet-geo/garnet-userapi/internal/handlers"
 	"github.com/gin-gonic/gin"
-	// jwtware "github.com/appleboy/gin-jwt/v2"mm,
+	log "github.com/sirupsen/logrus"
 )
 
 func InitServer() {
@@ -27,8 +26,11 @@ func InitServer() {
 	authGroup.PATCH("/user/:id", handlers.UserInfoPatchUserById)
 	authGroup.DELETE("/user/:id", handlers.UserInfoDeleteUserById)
 
+	log.Debugln("Created gin routing")
+
 	port := fmt.Sprint(env.GetServerHttpPort())
+	log.Debugln("Port from environment: " + port)
 	router.Run(":" + port)
 
-	log.Default().Println("Server started on port " + port)
+	log.Info("Server started on port " + port)
 }

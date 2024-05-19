@@ -4,6 +4,8 @@ import (
 	"errors"
 	"os"
 	"strconv"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func GetIntegerEnv(envName string) int {
@@ -17,6 +19,8 @@ func GetIntegerEnv(envName string) int {
 		panic(err)
 	}
 
+	log.Debugln("Got integer env", envName, "with value", intValue)
+
 	return intValue
 }
 
@@ -25,6 +29,8 @@ func GetStringEnv(envName string) string {
 	if value == "" {
 		panic(errors.New("missing string environment variable: " + envName))
 	}
+
+	log.Debugln("Got string env", envName, "with value", value)
 
 	return value
 }
