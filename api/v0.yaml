@@ -1,9 +1,10 @@
 openapi: 3.0.0
 
 servers:
-  # Added by API Auto Mocking Plugin
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/USLASHVLAD_1/GarnetUserAPI/v0
+  - description: Localhost
+    url: http://localhost:8080
+  - description: Production API
+    url: https://api.garnet-geo.org/userapi
 
 info:
   version: 'v0'
