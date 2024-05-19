@@ -23,7 +23,7 @@ func InitServer() {
 	authGroup.GET("/check", handlers.AuthGetCheckToken)
 
 	// User info
-	authGroup.GET("/user/:id", handlers.UserInfoGetUserById)
+	router.GET("/user/:id", handlers.UserInfoGetUserById)
 	authGroup.PATCH("/user/:id", handlers.UserInfoPatchUserById)
 	authGroup.DELETE("/user/:id", handlers.UserInfoDeleteUserById)
 
