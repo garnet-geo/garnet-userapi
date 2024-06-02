@@ -55,7 +55,6 @@ func UserInfoGetUserById(c *gin.Context) {
 }
 
 func UserInfoPatchUserById(c *gin.Context) {
-	// All user profiles are public currently
 	userID := c.MustGet(consts.UserIDContextKey).(string)
 	requestedUserId := c.Param("id")
 	if requestedUserId == "" {
@@ -185,7 +184,6 @@ func UserInfoPatchUserById(c *gin.Context) {
 }
 
 func UserInfoDeleteUserById(c *gin.Context) {
-	// All user profiles are public currently
 	userID := c.MustGet(consts.UserIDContextKey).(string)
 	requestedUserId := c.Param("id")
 	if requestedUserId == "" {
